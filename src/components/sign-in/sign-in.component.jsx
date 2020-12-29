@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState }from 'react';
 
 import { connect } from 'react-redux';
 
@@ -11,41 +11,35 @@ import { googleSignInStart , emailSignInStart } from '../../redux/user/user.acti
 
 import './sign-in.styles.scss';
 
-class SignIn extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            email : '',
-            password : ''
-        }
-    }
-
-    handleSubmit = async event => {
+const SignIn = ({emailSignInStart,googleSignInStart}) => {
+   const [userCredentials, setCredentials] = useState({ 
+       email:'',
+       password:''
+    })
+    const { email, password } = userCredentials
+    const handleSubmit = async event => {
         event.preventDefault();
-        const { emailSignInStart } = this.props;
-        const { email,password } = this.state;
 
         emailSignInStart(email,password);
 
     };
 
-    handleChange = event => {
+    const handleChange = event => {
         const { name, value } = event.target;
-        this.setState({[name] : value});
+        setCredentials({...userCredentials, [name] : value});
     }
 
-    render() {
-        const { googleSignInStart } = this.props;
+    
+
         return(
             <div className='sign-in'>
                 <h2>I already have an account</h2>
                 <span>Sign in with your email and password</span>
 
-                <form onSubmit={this.handleSubmit}>
-                    <FormInput name='email' type='email' label='Email' handleChange={this.handleChange} value={this.state.email} required/>
+                <form onSubmit={handleSubmit}>
+                    <FormInput name='email' type='email' label='Email' handleChange={handleChange} value={email} required/>
                     
-                    <FormInput name='password' type='password' label='Password' handleChange={this.handleChange} value={this.state.password} required/>
+                    <FormInput name='password' type='password' label='Password' handleChange={handleChange} value={password} required/>
                     
                     <div className='buttons'>
                         <CustomButton type='submit' >SIGN IN</CustomButton>
@@ -58,7 +52,7 @@ class SignIn extends React.Component {
             </div>
         )
     }
-}
+
 
 const mapDispatchToProps = dispatch => ({
     googleSignInStart: () => dispatch(googleSignInStart()),
